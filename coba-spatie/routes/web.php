@@ -23,11 +23,9 @@ Route::middleware(['auth', 'role:Administrator|Staff'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'admin'])->name('dashboard');
     // Kontrol user 
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
-    Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.users.create');
-    Route::get('/admin/users/{user}', [UserController::class, 'show'])->name('admin.users.show');
-    Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
     Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
-    Route::get('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 });
 
 // Administrator -- Administrator --Administrator -- Administrator -- Administrator -- Administrator -- Administrator -- Administrator -- Administrator -- Administrator --Administrator//

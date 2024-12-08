@@ -31,10 +31,10 @@
                 </td>
                 <td>
                     <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline;">
+                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style='display:inline;' onsubmit="return confirm('Are you sure you want to delete this user?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td>
             </tr>
