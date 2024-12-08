@@ -12,9 +12,9 @@
 <body>
     @include('partials.navbar') <!-- Navbar Include -->
     <div class="container mt-5">
-        <h1>Admin Dashboard</h1>
+        <h1>Dashboard User</h1>
         <h4>Welcome, {{ auth()->user()->name}}</h4>
-        <p class="lead">Anda telah dipindahkan ke /admin/dashboard</p>
+        <p class="lead">Let's organize your projects</p>
 
         <!-- Statistik -->
         <div class="row mb-4">

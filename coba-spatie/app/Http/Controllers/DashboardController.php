@@ -9,7 +9,18 @@ use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function admin()
+    {
+        // Ambil data statistik
+        $projects = Project::all();
+        $totalProjects = $projects->count();
+        $tasksCompleted = Task::where('status', 'completed')->count();
+        $upcomingTasks = Task::where('due_date', '>=', now())->count();
+
+        // Kirim data ke view
+        return view('dashboard', compact('projects', 'totalProjects', 'tasksCompleted', 'upcomingTasks'));
+    }
+    public function user()
     {
         // Ambil data statistik
         $projects = Project::all();

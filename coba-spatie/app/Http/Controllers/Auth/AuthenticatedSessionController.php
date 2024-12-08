@@ -28,7 +28,18 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Tentukan redirection berdasarkan level pengguna
+        $user = $request->user();
+        if ($user->role === 'Administrator') {
+            return redirect()->route('dashboard');
+        } elseif ($user->role === 'User') {
+            return redirect()->route('dashboard');
+        }
+
+        // Default redirect jika level tidak dikenali
+        return redirect()->route('login')->withErrors([
+            'role' => 'Role Anda tidak dikenali. Hubungi administrator.',
+        ]);
     }
 
     /**
@@ -42,6 +53,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login');
     }
 }

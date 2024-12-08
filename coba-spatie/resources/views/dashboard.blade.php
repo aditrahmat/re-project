@@ -13,6 +13,7 @@
     @include('partials.navbar') <!-- Navbar Include -->
     <div class="container mt-5">
         <h1>Dashboard</h1>
+        <h4>Welcome, {{ auth()->user()->name}}</h4>
         <p class="lead">Let's organize your projects</p>
 
         <!-- Statistik -->

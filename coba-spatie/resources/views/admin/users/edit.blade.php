@@ -25,10 +25,14 @@
         </div>
 
         <div class="mb-3">
-            <label for="level" class="form-label">level</label>
+            <label for="level" class="form-label">Level</label>
             <select name="level" id="level" class="form-select" required>
-                <option value="Administrator" @if($user->level == 'Administrator') selected @endif>Administrator</option>
-                <option value="User" @if($user->level == 'User') selected @endif>User</option>
+                @foreach ($roles as $role)
+                <option value="{{ $role->name }}"
+                    @if($user->hasRole($role->name)) selected @endif>
+                    {{ ucfirst($role->name) }}
+                </option>
+                @endforeach
             </select>
         </div>
 

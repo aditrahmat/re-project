@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\UserController;
 
 
 // Resources //
@@ -17,8 +17,25 @@ Route::resource('tasks', TaskController::class);
 Route::get('/', function () {
     return view('welcome');
 });
+// Administrator -- Administrator --Administrator -- Administrator -- Administrator -- Administrator -- Administrator -- Administrator -- Administrator -- Administrator --Administrator//
 
-Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:Administrator'])->name('dashboard');
+Route::middleware(['auth', 'role:Administrator|Staff'])->group(function () {
+    Route::get('dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+    // Kontrol user 
+    Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.users.create');
+    Route::get('/admin/users/{user}', [UserController::class, 'show'])->name('admin.users.show');
+    Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::get('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+});
+
+// Administrator -- Administrator --Administrator -- Administrator -- Administrator -- Administrator -- Administrator -- Administrator -- Administrator -- Administrator --Administrator//
+// Route::middleware(['auth', 'role:Staff'])->group(function () {
+//     Route::get('dashboard', [DashboardController::class, 'user'])->name('dashboard');
+//     Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+//     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+// });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

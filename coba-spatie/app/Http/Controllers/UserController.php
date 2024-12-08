@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -13,7 +14,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all(); // Mengambil semua pengguna dari database
-        return view('users.index', compact('users'));
+        return view('admin/users/index', compact('users'));
     }
 
     /**
@@ -21,8 +22,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id); // Cari user berdasarkan ID, error jika tidak ditemukan
-        return view('users.show', compact('user'));
+        $users = User::findOrFail($id); // Cari user berdasarkan ID, error jika tidak ditemukan
+        return view('admin.users.show', compact('users'));
     }
 
     /**
@@ -30,8 +31,10 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-        return view('users.edit', compact('user'));
+        $user = User::findOrFail($id); // Ambil data user berdasarkan ID
+        $roles = Role::all(); // Ambil semua role dari database
+
+        return view('admin.users.edit', compact('user', 'roles')); // Kirim ke view
     }
 
     /**
@@ -39,17 +42,33 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-
-        $validatedData = $request->validate([
+        // Validasi input
+        $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'level' => 'required|in:Administrator,User', // Validasi level
+            'email' => 'required|email|unique:users,email,' . $id, // Pastikan email unik kecuali untuk user yang sedang diedit
+            'password' => 'nullable|string|min:8', // Password opsional
+            'level' => 'required|exists:roles,name' // Level harus sesuai dengan role yang ada
         ]);
 
-        $user->update($validatedData);
+        // Cari user berdasarkan ID
+        $user = User::findOrFail($id);
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        // Perbarui data user
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        // Jika password diisi, perbarui password
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        $user->save(); // Simpan data user
+
+        // Perbarui role/level
+        $user->syncRoles([$request->level]); // Sinkronkan role dengan input level
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -59,12 +78,8 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if ($user->level === 'Administrator') {
-            return redirect()->route('users.index')->with('error', 'Cannot delete administrator accounts.');
-        }
-
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 }
